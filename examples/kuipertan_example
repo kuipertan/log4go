@@ -1,0 +1,31 @@
+package main
+
+import l4g "github.com/kuipertan/log4go"
+import "fmt"
+import "time"
+
+func main() {
+        defer func() {
+                if err := recover(); err != nil {
+                        fmt.Println(err)
+                }
+        }()
+        l4g.LoadConfiguration("logsettings.xml")
+
+        l4g.Error("This is an error")
+        l4g.Warn("This is an warnning")
+        l4g.Info("This is an infomation")
+/*
+        log := l4g.NewLogger()
+        log.AddFilter("stdout", l4g.DEBUG, l4g.NewConsoleLogWriter())
+        log.Error("This is an error")
+        log.Warn("This is an warnning")
+        log.Info("This is an infomation")
+        log.Debug("This is an debug")
+*/
+        time.Sleep(5*time.Second)
+
+}
+
+如果没有最后的sleep不会有日志输出[1.5之前应该是肯定没有，因为只用了单核]
+主协程退出，写log的协程也会被终止了，还来不及写。。 造成丢失最后日志
